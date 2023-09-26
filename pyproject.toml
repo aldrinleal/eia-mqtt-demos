@@ -1,5 +1,5 @@
 [tool.poetry]
-name = 'lhod-sample'
+name = 'eia-mqtt-demos'
 version = '0.0.1'
 description = "demo"
 authors = [
