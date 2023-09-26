@@ -1,0 +1,15 @@
+[tool.poetry]
+name = 'lhod-sample'
+version = '0.0.1'
+description = "demo"
+authors = [
+  "Aldrin Leal <aldrin@leal.eng.br>",
+]
+
+[tool.poetry.dependencies]
+python = '^3.9'
+platformio = "^6.1.10"
+
+[build-system]
+requires = ['poetry-core~=1.0']
+build-backend = 'poetry.core.masonry.api'
