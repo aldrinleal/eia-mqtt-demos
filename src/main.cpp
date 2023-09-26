@@ -9,9 +9,9 @@ const char* mqtt_server = "192.168.1.18";
 WiFiClient espClient;
 PubSubClient client(espClient);
 unsigned long lastMsg = 0;
-#define MSG_BUFFER_SIZE    (50)
+#define MSG_BUFFER_SIZE    (256)
 char msg[MSG_BUFFER_SIZE];
-int value = 0;
+long int value = 0;
 
 void callback(char *topic, byte *payload, unsigned int length) {
     Serial.print("Message arrived [");
@@ -21,15 +21,6 @@ void callback(char *topic, byte *payload, unsigned int length) {
         Serial.print((char) payload[i]);
     }
     Serial.println();
-
-    // Switch on the LED if an 1 was received as first character
-    if ((char) payload[0] == '1') {
-        digitalWrite(BUILTIN_LED, LOW);   // Turn the LED on (Note that LOW is the voltage level
-        // but actually the LED is on; this is because
-        // it is active low on the ESP-01)
-    } else {
-        digitalWrite(BUILTIN_LED, HIGH);  // Turn the LED off by making the voltage HIGH
-    }
 }
 
 void setup() {
@@ -87,9 +78,15 @@ void loop() {
     if (now - lastMsg > 2000) {
         lastMsg = now;
         ++value;
-        snprintf(msg, MSG_BUFFER_SIZE, "hello world #%ld", value);
+        snprintf(msg, MSG_BUFFER_SIZE, "{ \n"
+                                       "  \"state\": {\n"
+                                       "    \"desired\": {\n"
+                                       "      \"counter\": %ld\n"
+                                       "    }\n"
+                                       "  }\n"
+                                       "}", value);
         Serial.print("Publish message: ");
         Serial.println(msg);
-        client.publish("outTopic", msg);
+        client.publish("$aws/things/t14-mosquitto-bridge/shadow/update", msg);
     }
 }
